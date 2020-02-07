@@ -1,6 +1,6 @@
 name: spek
 base: core 
-version: '0.8.2'
+version: '0.8.3'
 summary: Acoustic spectrum analyser 
 description: |
   Spek is an acoustic spectrum analyser written in C and C++. 
