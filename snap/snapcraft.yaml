@@ -1,0 +1,115 @@
+name: spek
+base: core 
+version: '0.8.2'
+summary: Acoustic spectrum analyser 
+description: |
+  Spek is an acoustic spectrum analyser written in C and C++. 
+  It uses FFmpeg libraries for audio decoding and wxWidgets for the GUI..
+
+grade: stable
+confinement: strict
+
+parts:
+  spek:
+    plugin: autotools
+    configflags: ["--prefix=/usr"]
+    source: https://github.com/alexkay/spek/releases/download/v$SNAPCRAFT_PROJECT_VERSION/spek-$SNAPCRAFT_PROJECT_VERSION.tar.xz
+    stage-packages:
+      - ffmpeg
+      - libavcodec-ffmpeg56
+      - libavformat-ffmpeg56
+      - libavutil-ffmpeg54
+      - libatk1.0-0
+      - libcairo2
+      - libdatrie1
+      - libgdk-pixbuf2.0-0
+      - libglu1-mesa
+      - libgtk2.0-0
+      - libice6
+      - libjbig0
+      - libjpeg-turbo8
+      - libnotify4
+      - libpango-1.0-0
+      - libpangocairo-1.0-0
+      - libpangoft2-1.0-0
+      - libpixman-1-0
+      - libsm6
+      - libthai0
+      - libtiff5
+      - libwxbase3.0-0v5
+      - libwxgtk3.0-0v5
+      - libxcb-render0
+      - libxcomposite1
+      - libxcursor1
+      - libxi6
+      - libxinerama1
+      - libxrandr2
+      - libxrender1
+      - freeglut3
+      - binutils
+    build-packages:
+      - pkg-config
+      - intltool
+      - libavcodec-dev
+      - libavformat-dev
+      - libavutil-dev
+      - libwxgtk3.0-dev
+      - wx-common
+  desktop-gtk2:
+    build-packages:
+      - build-essential
+      - libgtk2.0-dev
+    make-parameters:
+      - FLAVOR=gtk2
+    plugin: make
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-subdir: gtk
+    stage-packages:
+      - libxkbcommon0
+      - ttf-ubuntu-font-family
+      - dmz-cursor-theme
+      - light-themes
+      - adwaita-icon-theme
+      - gnome-themes-standard
+      - shared-mime-info
+      - libgtk2.0-0
+      - libgdk-pixbuf2.0-0
+      - libglib2.0-bin
+      - libgtk2.0-bin
+      - unity-gtk2-module
+      - locales-all
+      - libappindicator1
+      - xdg-user-dirs
+      - ibus-gtk
+      - libibus-1.0-5
+
+plugs:
+  gtk-2-engines:
+    default-provider: gtk2-common-themes:gtk-2-engines
+    interface: content
+    target: $SNAP/lib/gtk-2.0
+  gtk-2-themes:
+    default-provider: gtk-common-themes:gtk-2-themes
+    interface: content
+    target: $SNAP/share/themes
+  icon-themes:
+    default-provider: gtk-common-themes:icon-themes
+    interface: content
+    target: $SNAP/share/icons
+
+apps:
+  spek:
+    command: desktop-launch $SNAP/usr/bin/spek
+    environment:
+      GTK_DATA_PREFIX: $SNAP
+      GTK_PATH: $SNAP/lib/gtk-2.0
+      XDG_DATA_DIRS: $SNAP/share:$XDG_DATA_DIRS
+    plugs:
+      - desktop
+      - desktop-legacy
+      - x11
+      - home
+      - removable-media
+      - mount-observe
+
+
