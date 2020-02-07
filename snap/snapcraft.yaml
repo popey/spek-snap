@@ -1,6 +1,6 @@
 name: spek
 base: core 
-version: '0.8.3'
+adopt-info: spek
 summary: Acoustic spectrum analyser 
 description: |
   Spek is an acoustic spectrum analyser written in C and C++. 
@@ -13,7 +13,7 @@ parts:
   spek:
     plugin: autotools
     configflags: ["--prefix=/usr"]
-    source: https://github.com/alexkay/spek/releases/download/v$SNAPCRAFT_PROJECT_VERSION/spek-$SNAPCRAFT_PROJECT_VERSION.tar.xz
+    source: https://github.com/alexkay/spek.git
     stage-packages:
       - ffmpeg
       - libavcodec-ffmpeg56
@@ -55,6 +55,20 @@ parts:
       - libavutil-dev
       - libwxgtk3.0-dev
       - wx-common
+    override-pull: |
+      snapcraftctl pull
+      last_committed_tag="$(git describe --tags --abbrev=0)"
+      last_committed_tag_ver="$(echo ${last_committed_tag} | sed 's/v//')"
+      last_released_tag="$(snap info $SNAPCRAFT_PROJECT_NAME | awk '$1 == "beta:" { print $2 }')"
+      # If the latest tag from the upstream project has not been released to
+      # beta, build that tag instead of master.
+      if [ "${last_committed_tag_ver}" != "${last_released_tag}" ]; then
+        git fetch
+        git checkout "${last_committed_tag}"
+      fi
+    override-build: |
+      snapcraftctl build
+      snapcraftctl set-version $(git -C ../src describe --tags)
   desktop-gtk2:
     build-packages:
       - build-essential
